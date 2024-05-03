@@ -8,62 +8,87 @@ from curses import wrapper
 
 class Board:
     """
-    Board class that holds the current status of a players board (both computer and player)
+    Board class that holds the current status of the game board
     """
 
     def __init__(self, size):
         self.ships = 5
         self.size = size
-        self.grid = [['.' for i in range(size)]]*size
+        self.grid = ["."*size for i in range(0, size)]
+        self.grid += [" "*size]
+        self.grid += ["-"*size]
+        self.grid += [" "*size]
+        self.grid += ["."*size for i in range(0, size)]
 
-    def printSelf(self):
-        row = ""
-        for i in self.grid:
-            for j in i:
-                row += ' '+(j)
-            print(row)
-            row = ""
+    def getStrings(self):
+        return self.grid
 
-    def add_ship(x,y):
+    def add_ship(x, y):
         pass
 
     def check_hit():
-        print(randint(0,10))
+        print(randint(0, 10))
         pass
 
 
-def main(stdscr):
+def redraw(window, board):
+    """
+    Redraws the game area, this will be called for every input or update to 
+    the board.
+    """
+
+    for i in range(0, len(board.grid)):
+        for j in range(0, len(board.grid[0])):
+            window.addstr(i, j, board.grid[i][j])
+
+    window.refresh()
+
+
+def main(window):
     """
     Main game loop runs here
     """
-    # Draw the board
-    size = 10
-    board = ["."*size for i in range(0, size)]
-    board += ["-"*size]
-    board += ["."*size for i in range(0, size)]
-    
-    start_y, start_x = 8, 2  # Start position of the cursor (based on size)
+    # Create the board
+    board = Board(size=8)
 
-    # initialize curses
-    stdscr = curses.initscr()
+    # Cursor start position
+    cursor_x = 1
+    cursor_y = 1
+
+    # Initialize curses
+    window = curses.initscr()
     curses.noecho()
     curses.cbreak()
-    stdscr.keypad(True)
+    window.keypad(True)
+    window.move(cursor_y, cursor_x)
 
-    # game logic 
-    for i in range(0, size):
-        for j in range(0, size):
-            stdscr.addstr(i, j, ".")
-    
+    # Game logic
     playing = True
     while (playing):
-        stdscr.refresh()
-        stdscr.getkey()
-
-    # end game logic and revert curses terminal settings
+        redraw(window, board)
+        action = window.getkey(cursor_y, cursor_x)
+        if action == "q":
+            break
+        elif action == "KEY_UP":
+            cursor_y -= 1
+            window.move(cursor_y, cursor_x)
+        elif action == "KEY_DOWN":
+            cursor_y += 1
+            window.move(cursor_y, cursor_x)
+        elif action == "KEY_LEFT":
+            cursor_x -= 1
+            window.move(cursor_y, cursor_x)
+        elif action == "KEY_RIGHT":
+            cursor_x += 1
+            window.move(cursor_y, cursor_x)
+        elif action == "KEY_ENTER":
+            action_location = window.getyx()
+    
+    # Undo changes to terminal output
     curses.nocbreak()
-    stdscr.keypad(False)
+    window.keypad(False)
     curses.echo()
     curses.endwin()
+
 
 wrapper(main)
