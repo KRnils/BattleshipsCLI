@@ -2,9 +2,11 @@
 from random import randint
 import curses
 from curses import wrapper
+from time import sleep
 
 board_size = 0
 ships_count = 0
+
 
 class Board:
     """
@@ -48,15 +50,16 @@ def start_game(window):
     """
 
     # Cursor start position. Puts the cursor at bottom of the players board.
-    cursor_x, cursor_y = 1, 1
+    cursor_x, cursor_y = 0, board_size*2
 
     # Create the board
     board = Board(size=board_size)
 
     # Game setup phase
     placed_ships = 0
+    playing = True
     window.addstr(0, board_size+2, "Place your ships")
-    while (placed_ships < ships_count):
+    while (placed_ships < ships_count and playing):
         redraw(window, board)
         window.move(cursor_y, cursor_x)
         window.addstr(
@@ -64,12 +67,12 @@ def start_game(window):
             "Remaing ships "+str(ships_count-placed_ships))
         action = window.getkey(cursor_y, cursor_x)
         if action == "q":
-            return
+            playing = False
         elif action == "KEY_UP":
-            if (cursor_y > 0):
+            if (cursor_y > board_size+1):
                 cursor_y -= 1
         elif action == "KEY_DOWN":
-            if (cursor_y < board_size-1):
+            if (cursor_y < board_size*2):
                 cursor_y += 1
         elif action == "KEY_LEFT":
             if (cursor_x > 0):
@@ -82,15 +85,32 @@ def start_game(window):
             window.addstr(3, board_size+2, str(action_location))
             board.add_ship(*action_location)
             placed_ships += 1
+        
+        window.addstr(
+            1, board_size+2,
+            "Remaing ships "+str(ships_count-placed_ships))
+    
+    # Intermission phase
+    window.refresh()
+    sleep(1)
+    curses.curs_set(0)
+    window.addstr(0, board_size+2, "Ships placed, get ready for battle!")
+    window.refresh()
+    sleep(2.5)
+    window.clear()    
 
-    playing = True
+    # Set up board and cursor for playing phase
+    window.addstr(0, board_size+2, "Select a position to attack")
+    curses.curs_set(2)
+    cursor_y, cursor_x = 0, 0
+
     while (playing):
         redraw(window, board)
         window.move(cursor_y, cursor_x)
         try:
             action = window.getkey(cursor_y, cursor_x)
             if action == "q":
-                break
+                playing = False
             elif action == "KEY_UP":
                 if (cursor_y > 0):
                     cursor_y -= 1
@@ -103,8 +123,9 @@ def start_game(window):
             elif action == "KEY_RIGHT":
                 if (cursor_x < board_size-1):
                     cursor_x += 1
-            elif action == "KEY_ENTER":
+            elif action == "\n":
                 action_location = window.getyx()
+                window.addstr(3, board_size+2, str(action_location))
         except ValueError as error:   # does nothing right now :p
             print(error)
             break
