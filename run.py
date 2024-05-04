@@ -5,6 +5,8 @@ from random import randint
 import curses
 from curses import wrapper
 
+board_size = 0
+ships_count = 0
 
 class Board:
     """
@@ -33,7 +35,7 @@ class Board:
 
 def redraw(window, board):
     """
-    Redraws the game area, this will be called for every input or update to 
+    Redraws the game area, this will be called for every input or update to
     the board.
     """
 
@@ -44,45 +46,51 @@ def redraw(window, board):
     window.refresh()
 
 
-def main(window):
+def start_game(window):
     """
     Main game loop runs here
     """
-    # Create the board
-    board = Board(size=8)
 
-    # Cursor start position
-    cursor_x = 1
-    cursor_y = 1
+    # Cursor start position. Puts the cursor at bottom of the players board.
+    cursor_x, cursor_y = 1, 1
 
     # Initialize curses
-    window = curses.initscr()
+    window.addstr(0, 0, "Enter board square dimension (max 15): ")
+    window.move(0, 40)
+    
+    # Temporarily allow ordinary input buffer
+    window.clear()
     curses.noecho()
     curses.cbreak()
     window.keypad(True)
-    window.move(cursor_y, cursor_x)
+
+    # Create the board
+    board = Board(size=board_size)
 
     # Game logic
     playing = True
     while (playing):
         redraw(window, board)
-        action = window.getkey(cursor_y, cursor_x)
-        if action == "q":
+        if (cursor_y < 0):
+            pass
+        window.move(cursor_y, cursor_x)
+        try:
+            action = window.getkey(cursor_y, cursor_x)
+            if action == "q":
+                break
+            elif action == "KEY_UP":
+                cursor_y -= 1
+            elif action == "KEY_DOWN":
+                cursor_y += 1
+            elif action == "KEY_LEFT":
+                cursor_x -= 1
+            elif action == "KEY_RIGHT":
+                cursor_x += 1
+            elif action == "KEY_ENTER":
+                action_location = window.getyx()
+        except ValueError as error:
+            print(error)
             break
-        elif action == "KEY_UP":
-            cursor_y -= 1
-            window.move(cursor_y, cursor_x)
-        elif action == "KEY_DOWN":
-            cursor_y += 1
-            window.move(cursor_y, cursor_x)
-        elif action == "KEY_LEFT":
-            cursor_x -= 1
-            window.move(cursor_y, cursor_x)
-        elif action == "KEY_RIGHT":
-            cursor_x += 1
-            window.move(cursor_y, cursor_x)
-        elif action == "KEY_ENTER":
-            action_location = window.getyx()
     
     # Undo changes to terminal output
     curses.nocbreak()
@@ -91,4 +99,35 @@ def main(window):
     curses.endwin()
 
 
-wrapper(main)
+def main():
+    global board_size
+    global ships_count
+    while (board_size < 3 or board_size > 12):
+        try:
+            board_size = int(
+                input("select game board square size (min 3, max 12):\n")
+                )
+        except ValueError as error:
+            print(f"Invalid input: {error} please try again")
+    
+    while (ships_count < 1 or ships_count > board_size**2):
+        try:
+            ships_count = int(
+                input(
+                    "Select the amount of ships per player"
+                    f"(min 1, max {board_size**2}):\n"
+                    ))
+            if ships_count < 1:
+                print(
+                    "Can't play with 0 or less ships,"
+                    "please put at least 1 ship"
+                    )
+            elif ships_count > board_size**2:
+                print("That's way too many ships, please put a lower number")
+        except ValueError as error:
+            print(f"Invalid input: {error} please try again")
+
+    wrapper(start_game)
+
+
+main()
