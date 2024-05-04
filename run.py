@@ -1,6 +1,4 @@
-# Your code goes here.
-# You can delete these comments, but do not change the name of this file
-# Write your code to expect a terminal of 80 characters wide and 24 rows high
+
 from random import randint
 import curses
 from curses import wrapper
@@ -14,19 +12,17 @@ class Board:
     """
 
     def __init__(self, size):
-        self.ships = 5
         self.size = size
-        self.grid = ["."*size for i in range(0, size)]
-        self.grid += [" "*size]
-        self.grid += ["-"*size]
-        self.grid += [" "*size]
-        self.grid += ["."*size for i in range(0, size)]
+        self.grid = [list("."*size) for i in range(0, size)]
+        self.grid += [list("-"*size)]
+        self.grid += [list("."*size) for i in range(0, size)]
 
     def getStrings(self):
         return self.grid
 
-    def add_ship(x, y):
-        pass
+    def add_ship(self, y, x):
+        if self.grid[y][x] == ".":
+            self.grid[y][x] = "§"
 
     def check_hit():
         print(randint(0, 10))
@@ -41,7 +37,7 @@ def redraw(window, board):
 
     for i in range(0, len(board.grid)):
         for j in range(0, len(board.grid[0])):
-            window.addstr(i, j, board.grid[i][j])
+            window.addstr(i, j, str(board.grid[i][j]))
 
     window.refresh()
 
@@ -54,45 +50,67 @@ def start_game(window):
     # Cursor start position. Puts the cursor at bottom of the players board.
     cursor_x, cursor_y = 1, 1
 
-    # Initialize curses
-    window.addstr(0, 0, "Enter board square dimension (max 15): ")
-    window.move(0, 40)
-    
-    # Temporarily allow ordinary input buffer
-    window.clear()
-    curses.noecho()
-    curses.cbreak()
-    window.keypad(True)
-
     # Create the board
     board = Board(size=board_size)
 
-    # Game logic
+    # Game setup phase
+    placed_ships = 0
+    window.addstr(0, board_size+2, "Place your ships")
+    while (placed_ships < ships_count):
+        redraw(window, board)
+        window.move(cursor_y, cursor_x)
+        window.addstr(
+            1, board_size+2,
+            "Remaing ships "+str(ships_count-placed_ships))
+        action = window.getkey(cursor_y, cursor_x)
+        if action == "q":
+            return
+        elif action == "KEY_UP":
+            if (cursor_y > 0):
+                cursor_y -= 1
+        elif action == "KEY_DOWN":
+            if (cursor_y < board_size-1):
+                cursor_y += 1
+        elif action == "KEY_LEFT":
+            if (cursor_x > 0):
+                cursor_x -= 1
+        elif action == "KEY_RIGHT":
+            if (cursor_x < board_size-1):
+                cursor_x += 1
+        elif action == "\n":
+            action_location = window.getyx()
+            window.addstr(3, board_size+2, str(action_location))
+            board.add_ship(*action_location)
+            placed_ships += 1
+
     playing = True
     while (playing):
         redraw(window, board)
-        if (cursor_y < 0):
-            pass
         window.move(cursor_y, cursor_x)
         try:
             action = window.getkey(cursor_y, cursor_x)
             if action == "q":
                 break
             elif action == "KEY_UP":
-                cursor_y -= 1
+                if (cursor_y > 0):
+                    cursor_y -= 1
             elif action == "KEY_DOWN":
-                cursor_y += 1
+                if (cursor_y < board_size-1):
+                    cursor_y += 1
             elif action == "KEY_LEFT":
-                cursor_x -= 1
+                if (cursor_x > 0):
+                    cursor_x -= 1
             elif action == "KEY_RIGHT":
-                cursor_x += 1
+                if (cursor_x < board_size-1):
+                    cursor_x += 1
             elif action == "KEY_ENTER":
                 action_location = window.getyx()
-        except ValueError as error:
+        except ValueError as error:   # does nothing right now :p
             print(error)
             break
-    
-    # Undo changes to terminal output
+
+    # Undo changes to terminal output, might not be needed
+    # since we have the wrapper.
     curses.nocbreak()
     window.keypad(False)
     curses.echo()
@@ -105,7 +123,7 @@ def main():
     while (board_size < 3 or board_size > 12):
         try:
             board_size = int(
-                input("select game board square size (min 3, max 12):\n")
+                input("select game board square size (min 3, max 10):\n")
                 )
         except ValueError as error:
             print(f"Invalid input: {error} please try again")
