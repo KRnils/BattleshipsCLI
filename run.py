@@ -122,12 +122,12 @@ def start_game(window):
             else:
                 pass
 
-    # Set up board and cursor for battle phase
-    curses.curs_set(0)
+    # Set up board and cursor for battle phase. Commented out for now, CI terminal dislikes curs_set for some reason.
+    # curses.curs_set(0)
     cursor_y, cursor_x = 0, 0
     window.addstr(0, board_size+2, "Get ready for battle!")
     sleep(1.5)
-    curses.curs_set(1)
+    # curses.curs_set(1)
 
     # battle phase
     while (player_score < ships_count and computer_score < ships_count):
