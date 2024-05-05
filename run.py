@@ -91,7 +91,7 @@ def start_game(window):
     computer_score = 0
 
     # Game setup phase
-    curses.curs_set(2)
+    curses.curs_set(1)
     placed_ships = 0
     while (placed_ships < ships_count):
         redraw(window, board)
@@ -127,7 +127,7 @@ def start_game(window):
     cursor_y, cursor_x = 0, 0
     window.addstr(0, board_size+2, "Get ready for battle!")
     sleep(1.5)
-    curses.curs_set(2)
+    curses.curs_set(1)
 
     # battle phase
     while (player_score < ships_count and computer_score < ships_count):
