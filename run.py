@@ -1,4 +1,3 @@
-
 from random import randint
 import curses
 from curses import wrapper
@@ -51,6 +50,9 @@ class Board:
             else:
                 self.grid[y][x] = "0"
                 return "miss"
+        elif self.grid[y][x] == "§":
+            self.grid[y][x] = "x"
+            return "hit"
         else:
             return "none"
 
@@ -84,11 +86,14 @@ def start_game(window):
     # Create the board
     board = Board(size=board_size, ships=ships_count)
 
+    # Scores
+    player_score = 0
+    computer_score = 0
+
     # Game setup phase
     curses.curs_set(2)
     placed_ships = 0
-    playing = True
-    while (placed_ships < ships_count and playing):
+    while (placed_ships < ships_count):
         redraw(window, board)
         window.addstr(0, board_size+2, "Place your ships")
         window.addstr(
@@ -125,10 +130,16 @@ def start_game(window):
     curses.curs_set(2)
 
     # battle phase
-    while (playing):
+    while (player_score < ships_count and computer_score < ships_count):
         redraw(window, board)
         window.move(cursor_y, cursor_x)
         window.addstr(0, board_size+2, "Select a position to attack")
+        window.addstr(5, board_size+2, "Ships left:")
+        window.addstr(
+            6, board_size+2,
+            f"Player: {ships_count-computer_score} "
+            f"Computer: {ships_count-player_score}"
+            )
         action = window.getkey(cursor_y, cursor_x)
         if action == "q":
             return
@@ -147,12 +158,13 @@ def start_game(window):
         elif action == "\n" or action == " ":
             hitormiss = board.attack_pos(cursor_y, cursor_x)
             if hitormiss == "hit":
-                redraw(window, board)
                 window.addstr(1, board_size+2, "It's a hit!")
                 window.refresh()
+                player_score += 1
                 sleep(1)
+                if player_score == ships_count:
+                    break
             elif hitormiss == "miss":
-                redraw(window, board)
                 window.addstr(1, board_size+2, "It's a miss!")
                 window.refresh()
                 sleep(1)
@@ -162,9 +174,50 @@ def start_game(window):
                 window.refresh()
                 sleep(1)
             if hitormiss != "none":
-                window.addstr(2, board_size+2, "Computer's turn...")
+                redraw(window, board)
+                window.addstr(0, board_size+2, "Computer's turn...")
                 window.refresh()
                 sleep(1)
+                hitormiss = "none"
+                while (hitormiss == "none"):
+                    attack = (randint(board_size+1,
+                                      board_size*2), randint(0, board_size-1))
+                    hitormiss = board.attack_pos(*attack)
+                    window.addstr(3, board_size+2, "hitting"+str(attack))
+                    window.refresh()
+                    sleep(1)
+                if hitormiss == "hit":
+                    redraw(window, board)
+                    window.addstr(0, board_size+2, "Computer's turn...")
+                    window.addstr(1, board_size+2, "It's a hit!")
+                    computer_score += 1
+                elif hitormiss == "miss":
+                    redraw(window, board)
+                    window.addstr(0, board_size+2, "Computer's turn...")
+                    window.addstr(1, board_size+2, "It's a miss!")
+                window.refresh()
+                sleep(1)
+
+    redraw(window, board)
+
+    if computer_score < player_score:
+        window.addstr(0, board_size+2, "You won!")
+        window.refresh()
+        sleep(0.5)
+        window.addstr(1, board_size+2, "Congratulations!")
+        window.refresh()
+        sleep(1)
+    elif computer_score > player_score:
+        window.addstr(0, board_size+2, "You lose!")
+        window.refresh()
+        sleep(0.5)
+        window.addstr(1, board_size+2, ":(")
+        window.refresh()
+        sleep(1)
+    else:
+        window.addstr(0, board_size+2, "It's a tie??")
+        window.refresh()
+        sleep(1)
 
     # Undo changes to terminal output, might not be needed
     # since we have the wrapper.
@@ -182,6 +235,8 @@ def main():
     """
     global board_size
     global ships_count
+    board_size = 0
+    ships_count = 0
     while (board_size < 3 or board_size > 10):
         try:
             board_size = int(
@@ -216,3 +271,8 @@ def main():
 
 if __name__ == '__main__':
     main()
+    if input("play again?(y/n)") in ("y", "Y"):
+        main()
+    else:
+        print("bye!")
+        sleep(0.5)
