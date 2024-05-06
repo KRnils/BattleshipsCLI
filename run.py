@@ -126,8 +126,10 @@ def start_game(window):
             else:
                 pass
 
-    # Set up board and cursor for battle phase.
+    # Set up cursor for battle phase.
     cursor_y, cursor_x = 0, 0
+
+    # Also show a message to make it clear the ships have been placed.
     window.addstr(0, board_size+2, "Get ready for battle!")
     window.refresh()
     sleep(2)
@@ -248,7 +250,7 @@ def main():
     board_size = 0
     ships_count = 0
 
-    # Intro text
+    # Intro text formatted to fit terminal, and keep linter happy.
     intro_text = """Hi and welcome to BattleshipsCLI!
     a fully terminal based version of the classic board game.
 

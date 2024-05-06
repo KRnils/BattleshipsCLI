@@ -12,17 +12,17 @@ BattleshipCLI is a web application that lets users enjoy a chance-based, single-
 Game flow:
 
 * The user picks how big of a game board they want and the amount of ships for each player.
+* For the rest of the game the player uses the keyboard controlled cursor to select positions on the board. The cursor is controlled 
 * The user selects where on the board they want their ships.
 * The player picks a position on the computer's side of the board to attack, if a ship is hit it will be displayed as an 'X', if no ship is hit that position will be marked with a '0'.
 * After the player's turn is finished the computer's turn is simulated and a position on the player's side of the board is picked at random, similar to the player's turn the players ships are changed into the 'X' symbol if they are hit.
 * This is repeated until all ships on any side has been hit.
 * If at any time all of the ships on any side has been hit the game ends and the winner is decided and a victory or loss message is displayed to the player depending on if they won or lost the game.
-* The player is offered to play again.
+* The player is offered to play again. If they choose to play again the game starts over from the game size selection step.
 
-## Design
+## Flowchart
 
-# WIP
-# Does anything go here?
+![Flowchart, made with Whimsical, see credits](readme/battleship_flow_chart.png)
 
 ## Features
 
@@ -45,6 +45,13 @@ Game flow:
 - # WIP
 
 ![screenshot 2](screenie)
+
+### Future Features
+
+* Ships longer than one tile
+* Limited ability to put a radar beacon instead of shooting, maybe two shots per game or with cooldown. Showing distance to nearest ship from one point on the board, making the game more interesting.
+* AI that can act on above two features intelligently. Maybe an easy mode where it makes mistakes.
+* Two player mode.
 
 ## Testing
 
@@ -90,9 +97,11 @@ All code is written from scratch, some solutions were inspired by the resources 
 - Some coding solutions were inspired by the Code Institute [Love Sandwhiches](https://github.com/Code-Institute-Solutions/love-sandwiches-p5-sourcecode/tree/master/05-deployment/01-deployment-part-1) project 
 - [The curses package](https://docs.python.org/3/library/curses.html), from the standard Python library, was used extensively.
 - The how to document at https://docs.python.org/3/howto/curses.html, was the main source for coding help.
+- [This Stackoverflow Entry](https://stackoverflow.com/questions/2058925/how-can-i-break-up-this-long-line-in-python) For suggestions on how to break up lines within long strings inside Python code.
 
 ### Tools
 
-- [VS Code](https://code.visualstudio.com/) The IDE I used for 100% of code writing.
+- [VS Code](https://code.visualstudio.com/) The IDE I used for 100% of code writing and majority of README writing.
 - [http://ecotrust-canada.github.io/markdown-toc](http://ecotrust-canada.github.io/markdown-toc) table of contents generated with markdown-toc 
+- [https://whimsical.com/](https://whimsical.com/) For the flowchart, really easy to use flowchart tool.
 # WIP!
