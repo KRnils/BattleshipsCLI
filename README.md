@@ -35,21 +35,28 @@ Click for full size
 
 ### Existing Features
 
-- __Manual ship placement with terminal cursor__
+__Data Validation__
+
+- Board size is validated so that too large or too small numbers are not accepted.
+- 
+
+![screenshot 2](readme/validation.png)
+
+__Manual ship placement with terminal cursor__
 
 - Move the cursor with the arrow keys on the keyboard
 - Place ships by pressing the space or enter key
 - The cursor can't be moved outside the game board
 
-![screenshot 1](readme/place_ships.png)
+![screenshot 2](readme/place_ships.png)
 
-- __Manual attack position selection with terminal cursor__
+__Manual attack position selection with terminal cursor__
 
 - Move the cursor with the arrow keys on the keyboard
 - Select positions to attack by pressing enter or space
 - The cursor can't be moved outside the game board
 
-![screenshot 2](readme/play_game.png)
+![screenshot 3](readme/play_game.png)
 
 ### Future Features
 
@@ -58,6 +65,9 @@ Click for full size
 * AI that can act on above two features intelligently. Maybe an easy mode where it makes mistakes.
 * Two player mode.
 
+## Data Model
+
+The game board is modeled on the board from the classic board game and consists of a "Board" data type created for the game, the Board data type takes a size and ship count as arguments on creation and in the __init__ function it
 
 ## Testing
 
@@ -71,7 +81,7 @@ Click for full size
 
 ### Known Bugs
 
-* Sometimes there will be a briefly visible terminal cursor in places where they should not be in the middle of game play, such as just outside the bottom right corner of the board or following any status update text. This is caused by the screen frequently updating and sometimes showing the cursor when it's used by the program to input characters, this was previously avoided by using curses.set_curs() to make the cursor invisible when not controlled by the user. Turn out this function does not work on the xterm terminal.
+* Sometimes there will be a briefly visible terminal cursor in places where they should not be in the middle of game play, such as just outside the bottom right corner of the board or following any status update text. This is caused by the screen frequently updating and sometimes showing the cursor when it's used by the program to input characters, this was previously avoided by using curses.set_curs() to make the cursor invisible when not controlled by the user. Turns out this function does not work on the xterm terminal.
 
 ## Deployment
 
