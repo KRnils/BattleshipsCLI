@@ -135,14 +135,14 @@ def start_game(window):
         window.move(cursor_y, cursor_x)
         window.addstr(0, board_size+2, "Select a position to attack")
         window.addstr(5, board_size+2, "Ships left:")
-        
+
         # Show current game status displayed as remaining ships.
         window.addstr(
             6, board_size+2,
             f"Player: {ships_count-computer_score} "
             f"Computer: {ships_count-player_score}"
             )
-        
+
         # Wait for player input, then move cursor or attack a position.
         action = window.getkey(cursor_y, cursor_x)
         if action in ("q", "Q"):
@@ -243,6 +243,8 @@ def main():
     # Reset global variables, so repeat games work as intended
     board_size = 0
     ships_count = 0
+
+    # Intro text
     intro_text = """Hi and welcome to BattleshipsCLI! a fully terminal based version of the classic board game.
     Your ships will be represented as a '§' symbol, while the computers ships will be invisible to you. A hit ship on either side looks like this 'X'.
     And finally a missed tile will be represented by a '0'.
@@ -253,6 +255,8 @@ def main():
     After setup, when it's your turn, move the cursor with the arrow keys and press enter or space to select a position to attack.
     You can quit the game at any time by pressing q or Q on the keyboard"""
     print(intro_text)
+
+    # Game size selection while loop
     while (board_size < 3 or board_size > 10):
         try:
             board_size = int(
@@ -265,6 +269,7 @@ def main():
         except ValueError as error:
             print(f"Invalid input: {error} please try again")
 
+    # Game ship count selection while loop
     while (ships_count < 1 or ships_count > board_size**2):
         try:
             ships_count = int(
