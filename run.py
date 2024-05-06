@@ -15,6 +15,7 @@ ships_count = 0
 
 class Board:
     """ Board class that holds the current status of the game board """
+
     def __init__(self, size, ships):
         """ Initialize board based on board size and ship count """
         self.size = size
@@ -43,9 +44,10 @@ class Board:
     def attack_pos(self, y, x):
         """
         Check for a hit, update the grid to show an x if there's a ship there
-        and return True. Used for both player and computer placed ships.
+        and return True.
         If there is no ship there update the grid to show a zero.
         If that spot has already been attacked return "none".
+        Used for both player and computer ships.
         """
         if self.grid[y][x] == ".":
             if (y, x) in self.hidden_ships:
@@ -90,7 +92,7 @@ def start_game(window):
     # Cursor start position. Puts the cursor at bottom of the players board.
     cursor_x, cursor_y = 0, board_size*2
 
-    # Game setup phase while loop
+    # Game setup phase loop
     placed_ships = 0
     while (placed_ships < ships_count):
         redraw(window, board)
@@ -116,17 +118,19 @@ def start_game(window):
             if (cursor_x < board_size-1):
                 cursor_x += 1
         elif action == "\n" or action == " ":
-            action_location = window.getyx()
-            window.addstr(3, board_size+2, str(action_location))
             if board.add_ship(cursor_y, cursor_x):
                 placed_ships += 1
+                window.addstr(1, board_size+2,
+                              "Remaing ships "+str(ships_count-placed_ships))
+                window.refresh()
             else:
                 pass
 
     # Set up board and cursor for battle phase.
     cursor_y, cursor_x = 0, 0
     window.addstr(0, board_size+2, "Get ready for battle!")
-    sleep(1.5)
+    window.refresh()
+    sleep(2)
 
     # Battle phase while loop. Redraws the board,
     # waits for player input and performs computer action.
@@ -220,7 +224,7 @@ def start_game(window):
         sleep(2)
     else:
         # This should never happen but is here just in case.
-        window.addstr(0, board_size+2, "It's a tie??")  
+        window.addstr(0, board_size+2, "It's a tie??")
         window.refresh()
         sleep(3)
 
@@ -245,18 +249,30 @@ def main():
     ships_count = 0
 
     # Intro text
-    intro_text = """Hi and welcome to BattleshipsCLI! a fully terminal based version of the classic board game.
-    Your ships will be represented as a '§' symbol, while the computers ships will be invisible to you. A hit ship on either side looks like this 'X'.
+    intro_text = """Hi and welcome to BattleshipsCLI!
+    a fully terminal based version of the classic board game.
+
+    Your ships will be represented as a '§' symbol, while the computers ships
+    will be invisible to you. A hit ship on either side looks like this 'X'.
     And finally a missed tile will be represented by a '0'.
-    You and the computer will take turns trading shots until all ships on either side has been hit.
-    First you will be asked to pick a board size and ship count, it's a good idea to keep the ship count below 10 or the game will take a long time to finish
-    However you are free to play with enough ships to fill the entire board if you like.
-    Next you will place your ships on your side of the board (the lower half). The computer will place their ships quietly.
-    After setup, when it's your turn, move the cursor with the arrow keys and press enter or space to select a position to attack.
+
+    You and the computer will take turns trading shots until
+    all ships on either side has been hit.
+
+    First you will be asked to pick a board size and ship count, it's a good
+    idea to keep the ship count below 10 or the game will take a long time to
+    finish. However you are free to play with enough ships to fill the entire
+    board if you like.
+
+    Next you will place your ships on your side of the board (the lower half).
+    The computer will place their ships quietly.
+    After setup, when it's your turn, move the cursor with the arrow keys and
+    press enter or space to select a position to attack.
     You can quit the game at any time by pressing q or Q on the keyboard"""
+
     print(intro_text)
 
-    # Game size selection while loop
+    # Game size selection loop, loops until a valid size is selected
     while (board_size < 3 or board_size > 10):
         try:
             board_size = int(
@@ -269,7 +285,7 @@ def main():
         except ValueError as error:
             print(f"Invalid input: {error} please try again")
 
-    # Game ship count selection while loop
+    # Game ship count selection loop, runs until a valid ship count is selected
     while (ships_count < 1 or ships_count > board_size**2):
         try:
             ships_count = int(
@@ -279,11 +295,11 @@ def main():
                     ))
             if ships_count < 1:
                 print(
-                    "Can't play with 0 or less ships,"
-                    "please put at least 1 ship"
+                    "Can't play with 0 or less ships, "
+                    "please put at least 1 ship\n"
                     )
             elif ships_count > board_size**2:
-                print("That's way too many ships, please put a lower number")
+                print("That's way too many ships, please put a lower number\n")
         except ValueError as error:
             print(f"Invalid input: {error} please try again")
 
