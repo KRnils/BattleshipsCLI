@@ -3,6 +3,14 @@ import curses
 from curses import wrapper
 from time import sleep
 
+"""
+Global variables for board size and ship count.
+This solutions was chosen to deal with the curses wrapper,
+combined with the board size and ship count choices for the player.
+It's possible to create an in-wrapper input for those choices,
+but it would take more time.
+So currently those choices are made "outside" the game.
+"""
 board_size = 0
 ships_count = 0
 
@@ -19,6 +27,8 @@ class Board:
         self.grid = [list("."*size) for i in range(0, size)]
         self.grid += [list("-"*size)]
         self.grid += [list("."*size) for i in range(0, size)]
+
+        # This creates the list of locations for the computer side's ships
         self.hidden_ships = []
         while (len(self.hidden_ships) < ships):
             tup = (randint(0, size-1), randint(0, size-1))
@@ -28,7 +38,7 @@ class Board:
     def add_ship(self, y, x):
         """
         For adding ships during the setup phase.
-        If the spot is empty, add ship and return True
+        If the spot is empty, add ship and return True.
         """
         if self.grid[y][x] == ".":
             self.grid[y][x] = "§"
@@ -39,9 +49,9 @@ class Board:
     def attack_pos(self, y, x):
         """
         Check for a hit, update the grid to show an x if there's a ship there
-        and return True.
+        and return True. Used for both player and computer placed ships.
         If there is no ship there update the grid to show a zero.
-        If that spot has already been attacked return False.
+        If that spot has already been attacked return "none".
         """
         if self.grid[y][x] == ".":
             if (y, x) in self.hidden_ships:
@@ -64,7 +74,8 @@ class Board:
 def redraw(window, board):
     """
     Redraws the game area, this should be called for every input or update to
-    the board.
+    the board. Takes a window and board as arguments
+    so the board grid can be drawn in the window.
     """
     window.clear()
     for i in range(0, len(board.grid)):
@@ -91,7 +102,6 @@ def start_game(window):
     computer_score = 0
 
     # Game setup phase
-    # curses.curs_set(1)
     placed_ships = 0
     while (placed_ships < ships_count):
         redraw(window, board)
@@ -122,14 +132,12 @@ def start_game(window):
             else:
                 pass
 
-    # Set up board and cursor for battle phase. Commented out for now, CI terminal dislikes curs_set for some reason.
-    # curses.curs_set(0)
+    # Set up board and cursor for battle phase.
     cursor_y, cursor_x = 0, 0
     window.addstr(0, board_size+2, "Get ready for battle!")
     sleep(1.5)
-    # curses.curs_set(1)
 
-    # battle phase
+    # Battle phase, most of the game happens here
     while (player_score < ships_count and computer_score < ships_count):
         redraw(window, board)
         window.move(cursor_y, cursor_x)
@@ -183,9 +191,6 @@ def start_game(window):
                     attack = (randint(board_size+1,
                                       board_size*2), randint(0, board_size-1))
                     hitormiss = board.attack_pos(*attack)
-                    window.addstr(3, board_size+2, "hitting"+str(attack))
-                    window.refresh()
-                    sleep(1)
                 if hitormiss == "hit":
                     redraw(window, board)
                     window.addstr(0, board_size+2, "Computer's turn...")
@@ -235,6 +240,7 @@ def main():
     """
     global board_size
     global ships_count
+    # Reset gloabl variables, so repeat games work as intended
     board_size = 0
     ships_count = 0
     while (board_size < 3 or board_size > 10):
@@ -266,13 +272,17 @@ def main():
         except ValueError as error:
             print(f"Invalid input: {error} please try again")
 
+    # curses wrapper that starts the game in a curses "window"
     wrapper(start_game)
 
 
 if __name__ == '__main__':
     main()
-    if input("play again?(y/n)") in ("y", "Y"):
-        main()
-    else:
-        print("bye!")
-        sleep(0.5)
+    while (True):
+        # anything other than y or Y is "no", no need for n specifically.
+        if input("play again?(y/n)") in ("y", "Y"):
+            main()
+        else:
+            print("bye!")
+            sleep(0.5)
+            break
