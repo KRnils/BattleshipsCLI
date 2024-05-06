@@ -5,6 +5,23 @@ Welcome to BattleshipCLI, the fully terminal based implementation of the classic
 
 [Click here to play!](https://krnils-app-b3ee567503b8.herokuapp.com)
 
+
+- [BattleshipCLI](#battleshipcli)
+  * [Introduction](#introduction)
+  * [Flowchart](#flowchart)
+  * [Features](#features)
+    + [Existing Features](#existing-features)
+    + [Future Features](#future-features)
+  * [Data Model](#data-model)
+  * [Testing](#testing)
+    + [Solved Bugs](#solved-bugs)
+    + [Known Bugs](#known-bugs)
+  * [Deployment](#deployment)
+  * [Credits](#credits)
+    + [Content](#content)
+    + [Code](#code)
+    + [Tools](#tools)
+
 ## Introduction
 
 BattleshipCLI is a web application that lets users enjoy a chance-based, single-user game against the computer online. BattleshipCLI is based on the classic board game (or pen and paper game) mostly known as Battleships (The first iteration was called something else: [See Wikipedia for the fascinating history](https://en.wikipedia.org/wiki/Battleship_(game))).
@@ -21,6 +38,8 @@ Game flow:
 * The player is offered to play again. If they choose to play again the game starts over from the game size selection step.
 
 ## Flowchart
+
+This is the flowchart showing the intended game flow. 
 
 ![Flowchart, made with Whimsical, see credits](readme/battleship_flow_chart.png)
 Click for full size
@@ -67,7 +86,7 @@ __Manual attack position selection with terminal cursor__
 
 ## Data Model
 
-The game board is modeled on the board from the classic board game and consists of a "Board" data type created for the game, the Board data type takes a size and ship count as arguments on creation and in the __init__ function it
+The game board is modeled on the board from the classic board game and consists of a "Board" data type created for the game, the Board data type takes a size and ship count as arguments on creation and in the __init__ function it uses the size to create a 2-dimensional list of single character strings to represent the board. A single Board is used to hold both the player and the computer side of the board. Characters work well both for storing the state of the board and as output for the terminal to display. The ship count is then used to generate a list of coordinates for the computer side ships and these coordinates are limited to fit inside the dimensions of the board. When the game is run a Board is generated and this is then drawn to the terminal repeatedly after any user interaction. Changes to the game state is recorded directly in the Board data type as single characters strings, such as the player placing ships or attacks being recorded as hits or misses anywhere on the board. Scoring is calculated outside of the board in the game function.
 
 ## Testing
 
@@ -81,7 +100,8 @@ The game board is modeled on the board from the classic board game and consists 
 
 ### Known Bugs
 
-* Sometimes there will be a briefly visible terminal cursor in places where they should not be in the middle of game play, such as just outside the bottom right corner of the board or following any status update text. This is caused by the screen frequently updating and sometimes showing the cursor when it's used by the program to input characters, this was previously avoided by using curses.set_curs() to make the cursor invisible when not controlled by the user. Turns out this function does not work on the xterm terminal.
+* Sometimes there will be a briefly visible terminal cursor in places where they should not be in the middle of game play, such as just outside the bottom right corner of the board or following any status update text. This is caused by the screen frequently updating and sometimes showing the cursor when it's used by the program to input characters, this was previously avoided by using curses.set_curs() to make the cursor invisible when not controlled by the user but this feature is not compatible with the terminal used.
+* There is some other flickering of the graphics happening sometimes when the window is refreshed, this is not fully understood but does not prevent the game from working as intended.
 
 ## Deployment
 
