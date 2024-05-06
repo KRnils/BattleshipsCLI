@@ -3,7 +3,7 @@
 
 Welcome to BattleshipCLI, the fully terminal based implementation of the classic Battleships, you can play the game on the web deployment in your browser, which at least works on Chrome. You can also run the game locally by downloadin the run.py file and running it with Python (should be compatible with any 3.x version, developed and tested with 3.11.7)
 
-![amiresponsive result](screenie?)
+[Click here to play!](https://krnils-app-b3ee567503b8.herokuapp.com)
 
 ## Introduction
 
@@ -23,50 +23,47 @@ Game flow:
 ## Flowchart
 
 ![Flowchart, made with Whimsical, see credits](readme/battleship_flow_chart.png)
+Click for full size
 
 ## Features
 
 * Battleship game playable against the computer in a terminal.
 * Consistent and frequently updating terminal screen for intuitive display and clear visual feedback on the game status.
-* Variable size game board to allow for different styles of game, selected by the player at the start. The game board can be anywhere from 3x3 to 10x10.
+* Variable size game board to allow for different styles of game, selected by the player at the start. The game board can be any square from 3x3 to 10x10.
 * Variable amount of ships per game, the player chooses how many ships there should be, it's possible to fill the entire board with ships or have just one per side (1 to 100 ships)!
 * The board is split into two parts by a dividing line, the upper half holds the computer's ships which are invisible to the player until hit. The lower half is the player's side where they can place their ships. The players ships are shown with a '§' symbol.
 
 ### Existing Features
 
-- __Feature 1__
+- __Manual ship placement with terminal cursor__
 
-- # WIP
+- Move the cursor with the arrow keys on the keyboard
+- Place ships by pressing the space or enter key
+- The cursor can't be moved outside the game board
 
-![screenshot 1](screenie)
+![screenshot 1](readme/place_ships.png)
 
-- __Feature 2__
+- __Manual attack position selection with terminal cursor__
 
-- # WIP
+- Move the cursor with the arrow keys on the keyboard
+- Select positions to attack by pressing enter or space
+- The cursor can't be moved outside the game board
 
-![screenshot 2](screenie)
+![screenshot 2](readme/play_game.png)
 
 ### Future Features
 
 * Ships longer than one tile
-* Limited ability to put a radar beacon instead of shooting, maybe two shots per game or with cooldown. Showing distance to nearest ship from one point on the board, making the game more interesting.
+* Limited ability to put a radar beacon instead of shooting, maybe two shots per game or with cooldown. It would show the distance to nearest ship from one point on the board, making the game more interesting.
 * AI that can act on above two features intelligently. Maybe an easy mode where it makes mistakes.
 * Two player mode.
 
+
 ## Testing
 
-### W3C Validator Testing
-
-__All Python code has been tested with the ... .__
-# WIP
-
-see [TESTING.md](TESTING.md) for more discussion.
-# WIP
-
-### Accessibility Test
-
-
-see [TESTING.md](TESTING.md) for all details and a full list of scores and other tests performed.
+* All Python code has been continuously checked with the Flake8 linter (I hate red and yellow squiggly lines). No problems are left in the latest version of the code.
+* Validation for all types of input has been manually tested. The user has an opportunity to put in weird things during the board size and ship count selection steps. These are handled sensibly and the user is warned and prompted to try again if they input text or numbers that are out of bounds.
+* During the main gameplay the user is prevented from moving the cursor out of bounds by the code and if they try to put a ship were one already exists nothing happens, if they try to fire on a position that has already been fired on (either with a hit ship 'X' or a '0') they get a message that the position has already been hit and they need to choose another one.
 
 ### Solved Bugs
 
@@ -79,7 +76,17 @@ see [TESTING.md](TESTING.md) for all details and a full list of scores and other
 ## Deployment
 
 - The game was deployed on [Heroku](http://www.heroku.com/). Here's how to deploy on Heroku:
-  - 
+    - Make sure the code is hosted on github.
+    - Create a Heroku account and/or log in.
+    - Click New and select Create new app.
+    - Select a region and a unique name for the app. Click Create App.
+    - Some projects require special hidden files like credentials to be added or need options added to Config Vars. This project only has one Config Vars setting added required for the Code Institue Terminal emulator.
+    - Next add the required Buildpacks by scrolling down and selecting them from the dropdown, this project used Python and Nodejs to make the terminal work.
+    - Next go click Deploy from the navigation menu.
+    - Select a deployment method such as Githuh, like this project.
+    - Select the repository to connect to from the next menu.
+    - Further down is the deploy button where you can select to deply automatically or only deploy when you click the deploy button.
+    - Click the deploy button and wait for the build to finish.
 
 
 The live link can be found here - https://krnils-app-b3ee567503b8.herokuapp.com
@@ -89,13 +96,15 @@ The live link can be found here - https://krnils-app-b3ee567503b8.herokuapp.com
 ### Content
 
 - The game itself is based on the old board game: [Wikipedia article](https://en.wikipedia.org/wiki/Battleship_(game)).
+- Some of the ideas for the game is based on the Code Institue sample project [found here](https://p3-battleships.herokuapp.com/)
 
 ### Code
 
-All code is written from scratch, some solutions were inspired by the resources listed below.
+These resources were used to make the project. All Python code is written from scratch but has taken some inspiration or guidance from the below sources.
 
+- The code for the Terminal emulator is provided entirely by Code Institute from [this template](https://github.com/Code-Institute-Org/python-essentials-template)
 - Some coding solutions were inspired by the Code Institute [Love Sandwhiches](https://github.com/Code-Institute-Solutions/love-sandwiches-p5-sourcecode/tree/master/05-deployment/01-deployment-part-1) project 
-- [The curses package](https://docs.python.org/3/library/curses.html), from the standard Python library, was used extensively.
+- [The curses package](https://docs.python.org/3/library/curses.html), from the standard Python library, was used extensively. This enables the screen to update consistently and input to be done with a terminal cursor.
 - The how to document at https://docs.python.org/3/howto/curses.html, was the main source for coding help.
 - [This Stackoverflow Entry](https://stackoverflow.com/questions/2058925/how-can-i-break-up-this-long-line-in-python) For suggestions on how to break up lines within long strings inside Python code.
 
@@ -103,5 +112,5 @@ All code is written from scratch, some solutions were inspired by the resources 
 
 - [VS Code](https://code.visualstudio.com/) The IDE I used for 100% of code writing and majority of README writing.
 - [http://ecotrust-canada.github.io/markdown-toc](http://ecotrust-canada.github.io/markdown-toc) table of contents generated with markdown-toc 
-- [https://whimsical.com/](https://whimsical.com/) For the flowchart, really easy to use flowchart tool.
-# WIP!
+- I used [https://whimsical.com/](https://whimsical.com/) for the flowchart, really easy to use flowchart (and other things) tool.
+- Microsofts [Flake8 linter VSCode Extension](https://marketplace.visualstudio.com/items?itemName=ms-python.flake8) was used throughout development to ensure PEP8 compliance.
