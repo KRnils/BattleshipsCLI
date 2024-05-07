@@ -284,8 +284,8 @@ def main():
                 print("Maybe pick a slightly smaller board size")
             elif board_size < 3:
                 print("Please pick a bigger board size")
-        except ValueError as error:
-            print(f"Invalid input: {error} please try again")
+        except ValueError:
+            print("Invalid input, please put only numbers")
 
     # Game ship count selection loop, runs until a valid ship count is selected
     while (ships_count < 1 or ships_count > board_size**2):
@@ -302,8 +302,8 @@ def main():
                     )
             elif ships_count > board_size**2:
                 print("That's way too many ships, please put a lower number\n")
-        except ValueError as error:
-            print(f"Invalid input: {error} please try again")
+        except ValueError:
+            print("Invalid input, please put only numbers")
 
     # curses wrapper that starts the game in a curses "window"
     wrapper(start_game)
